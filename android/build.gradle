@@ -1,0 +1,29 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+
+// Setting the build directory for each subproject
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(":app")
+
+    // Set namespace directly if the project has an android block
+    if (project.hasProperty('android')) {
+        project.android {
+            if (namespace == null) {
+                // Fallback to project group as namespace if not defined
+                namespace = project.group.toString()
+            }
+        }
+    }
+}
+
+// Register the clean task to delete the build directory
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
